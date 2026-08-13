@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sempre Tem Um Boost — KTO</title>
-<link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="apple-touch-icon" href="assets/favicon.png">
 <!-- Preload critical above-the-fold assets -->
 <link rel="preload" as="image" href="assets/hero-boost.jpg" fetchpriority="high">
 <style>
@@ -243,7 +241,6 @@
     min-height: 540px;
     perspective: 1400px;
   }
-  /* legacy class kept hidden — replaced by pack-reveal */
   .hero-img { display: none; }
   @keyframes floatY {
     0%,100% { transform: translateY(0); }
@@ -262,338 +259,6 @@
     96% { transform: rotate(0.5deg); }
     98% { transform: rotate(0deg); }
   }
-
-  /* ── INTERACTIVE PACK REVEAL ─────────── */
-  .pack-stage {
-    position: relative;
-    width: 100%; max-width: 360px; aspect-ratio: 0.65;
-    transform-style: preserve-3d;
-  }
-  .pack-hint {
-    position: absolute; left: 50%; bottom: -100px;
-    transform: translateX(-50%);
-    font-size: 11px; font-weight: 400; letter-spacing: .05em; text-transform: none;
-    color: #fff;
-    display: flex; align-items: center; gap: 10px;
-    pointer-events: none;
-  }
-  .pack-hint-link { color: #fff; }
-  .pack-hint-grey { color: rgba(255,255,255,.45); white-space: nowrap; }
-    transition: opacity .3s;
-    white-space: nowrap;
-  }
-  .pack-hint::before {
-    display: none;
-  }
-  .pack-stage.opened .pack-hint { opacity: 0; }
-
-  /* Closed pack */
-  .pack {
-    position: absolute; inset: 0;
-    cursor: pointer;
-    transition: transform .35s ease, filter .3s;
-    animation: floatY 4.2s ease-in-out infinite;
-    user-select: none;
-    filter: drop-shadow(0 32px 60px rgba(218,0,0,.35)) drop-shadow(0 12px 24px rgba(0,0,0,.6));
-  }
-  .pack:hover { transform: translateY(-8px) rotate(-1deg); }
-
-  /* Foil sheen removed */
-  .pack-glint { display: none; }
-
-  /* ── Moving shine on the card border ── */
-  @property --shine-angle {
-    syntax: '<angle>';
-    inherits: false;
-    initial-value: 0deg;
-  }
-  .card-shine {
-    position: absolute;
-    height: 100%; aspect-ratio: 0.583;
-    left: 50%; top: 50%; transform: translate(-50%, -50%);
-    border-radius: 6% / 3.5%;
-    padding: 3px;
-    z-index: 4;
-    pointer-events: none;
-    background: conic-gradient(from var(--shine-angle),
-      transparent 0deg,
-      transparent 295deg,
-      rgba(255,255,255,.15) 320deg,
-      rgba(255,255,255,.95) 340deg,
-      rgba(255,255,255,.15) 352deg,
-      transparent 360deg);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-            mask-composite: exclude;
-    animation: shineSpin 2.4s linear infinite;
-  }
-  @keyframes shineSpin {
-    to { --shine-angle: 360deg; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .card-shine { animation: none; }
-  }
-
-  /* ── Diagonal surface sweep ── */
-  .card-sweep {
-    position: absolute;
-    height: 100%; aspect-ratio: 0.583;
-    left: 50%; top: 50%; transform: translate(-50%, -50%);
-    border-radius: 6% / 3.5%;
-    overflow: hidden;
-    z-index: 4;
-    pointer-events: none;
-    mix-blend-mode: screen;
-  }
-  .card-sweep::before {
-    content: "";
-    position: absolute;
-    top: -30%; bottom: -30%;
-    width: 45%;
-    left: -60%;
-    background: linear-gradient(100deg,
-      transparent,
-      rgba(255,255,255,.12) 35%,
-      rgba(255,255,255,.55) 50%,
-      rgba(255,255,255,.12) 65%,
-      transparent);
-    transform: skewX(-18deg);
-    animation: cardSweep 5s ease-in-out 2s infinite;
-  }
-  @keyframes cardSweep {
-    0%   { left: -60%; }
-    16%  { left: 130%; }
-    100% { left: 130%; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .card-sweep::before { animation: none; opacity: 0; }
-  }
-
-  .pack-img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: contain;
-    pointer-events: none;
-    user-select: none;
-    animation: none;
-    transform-origin: 50% 65%;
-  }
-  .pack-stage.opened .pack-img,
-  .pack:hover .pack-img { animation: none; }
-
-  .pack-inner {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    color: #fff;
-    z-index: 2;
-    pointer-events: none;
-  }
-  .pack-tag {
-    position: absolute; bottom: -56px; left: 50%; transform: translateX(-50%);
-    font-size: 13px; font-weight: 500; letter-spacing: .01em;
-    color: rgba(255,255,255,.55);
-    white-space: nowrap;
-    z-index: 4;
-    opacity: 0;
-    transition: opacity .5s ease;
-    pointer-events: none;
-    text-align: center;
-  }
-  .pack-tag.visible { opacity: 1; }
-
-  /* Tear / opening animation: split into 2 halves using clip-path on full images */
-  .pack-half {
-    position: absolute; inset: 0;
-    transition: transform .9s cubic-bezier(.6,-.2,.4,1.4), opacity .6s ease .4s;
-    pointer-events: none;
-    background-image: var(--pack-img);
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0;
-  }
-  .pack-half.left { clip-path: polygon(0 0, 50% 0, 48% 18%, 52% 36%, 47% 54%, 53% 72%, 48% 90%, 50% 100%, 0 100%); }
-  .pack-half.right { clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%, 48% 90%, 53% 72%, 47% 54%, 52% 36%, 48% 18%); }
-
-  .pack-stage.opened .pack {
-    pointer-events: none;
-    transition: opacity .25s .35s;
-  }
-  .pack-stage.opened .pack-img { opacity: 0; transition: opacity .15s .35s; }
-  .pack-stage.opened .pack-half { opacity: 1; transition: opacity 0s, transform .9s cubic-bezier(.6,-.2,.4,1.4) .35s, opacity .5s ease .9s; }
-  .pack-stage.opened .pack-glint { opacity: 0; }
-  .pack-stage.opened .pack-half.left { transform: translate(-60%, 8%) rotate(-14deg); opacity: 0; }
-  .pack-stage.opened .pack-half.right { transform: translate(60%, 8%) rotate(14deg); opacity: 0; }
-  .pack-stage.opened .pack-inner { opacity: 0; transition: opacity .25s; }
-
-  /* Novo pacote badge */
-  .pack-badge {
-    position: absolute;
-    left: -4%; bottom: 8%;
-    width: 38.6%; height: auto;
-    z-index: 5;
-    pointer-events: none;
-    filter: drop-shadow(0 8px 20px rgba(0,0,0,.5));
-    animation: badgeBob 3.2s ease-in-out infinite;
-    transform-origin: center;
-  }
-  @keyframes badgeBob {
-    0%,100% { transform: rotate(-8deg) translateY(0); }
-    50%     { transform: rotate(-8deg) translateY(-6px); }
-  }
-  .pack-stage.opened .pack-badge {
-    opacity: 0;
-    transition: opacity .25s;
-  }
-
-  /* Aposta Grátis badge */
-  .pack-freebet-badge {
-    position: absolute;
-    right: auto; left: 12.5%; top: 5%;
-    width: 22.1%; height: auto;
-    z-index: 5;
-    pointer-events: none;
-    filter: drop-shadow(0 8px 20px rgba(0,0,0,.5));
-    animation: none;
-    transform-origin: 50% 65%;
-  }
-  @keyframes badgeBobR {
-    0%,100% { transform: rotate(-8deg) translateY(0); }
-    50%     { transform: rotate(-8deg) translateY(-6px); }
-  }
-  .pack-stage.opened .pack-freebet-badge { opacity: 0; transition: opacity .25s; }
-
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    20% { transform: translateX(-6px) rotate(-1deg); }
-    40% { transform: translateX(6px) rotate(1deg); }
-    60% { transform: translateX(-4px); }
-    80% { transform: translateX(4px); }
-  }
-
-  /* The revealed card */
-  .pack-reveal {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    pointer-events: none;
-  }
-  .pack-stage.opened .pack-reveal { pointer-events: auto; cursor: pointer; }
-  .reveal-card {
-    width: 92%; aspect-ratio: 0.65;
-    border-radius: 14px;
-    filter: drop-shadow(0 32px 60px rgba(0,0,0,.7));
-    transform: scale(.55) rotateY(180deg);
-    opacity: 0;
-    visibility: hidden;
-    transition:
-      transform .85s cubic-bezier(.22,.9,.3,1.1) .25s,
-      opacity .55s ease .3s,
-      visibility 0s linear .9s;
-    background: transparent;
-    position: relative;
-    will-change: transform, opacity;
-  }
-  .reveal-card img#revealImg {
-    width: 100%; height: 100%; object-fit: contain; display: block;
-  }
-  .reveal-badge {
-    position: absolute;
-    top: 6%; left: 14%;
-    width: 22%; height: auto;
-    pointer-events: none;
-    z-index: 2;
-    /* Pop-in animation when card is revealed */
-    opacity: 0;
-    transform: scale(.4) rotate(-12deg);
-    transition: opacity .25s ease, transform .45s cubic-bezier(.34, 1.56, .64, 1);
-  }
-  .pack-stage.opened .reveal-badge {
-    opacity: 1;
-    transform: scale(1) rotate(-6deg);
-    transition-delay: .35s;
-  }
-  .reveal-card.is-common,
-  .reveal-card.is-common::after,
-  .reveal-card::after { box-shadow: none; }
-  .reveal-card.is-common::after,
-  .reveal-card::after { display: none; }
-  .pack-stage.opened .reveal-card {
-    transform: scale(1) rotateY(0);
-    opacity: 1;
-    visibility: visible;
-    transition:
-      transform .85s cubic-bezier(.22,.9,.3,1.1) .35s,
-      opacity .5s ease .35s,
-      visibility 0s linear 0s;
-    animation: cardFloat 4s ease-in-out 1.4s infinite;
-  }
-  /* Dismiss: slide up & fade */
-  .pack-stage.opened.dismissing .reveal-card {
-    animation: none !important;
-    transform: translateY(-160%) scale(.85) rotate(-4deg) !important;
-    opacity: 0 !important;
-    visibility: visible;
-    transition:
-      transform .55s cubic-bezier(.4, 0, 1, 1) 0s,
-      opacity .4s ease-in .15s,
-      visibility 0s linear .55s !important;
-  }
-  /* While dismissing, keep pack hidden — only re-show after card is gone */
-  .pack-stage.dismissing .pack { opacity: 0; transition: opacity 0s; }
-  .pack-stage.dismissing .pack-img { opacity: 0; transition: opacity 0s; }
-  .pack-stage.dismissing .pack-badge { opacity: 0; transition: opacity 0s; }
-  @keyframes cardFloat {
-    0%,100% { transform: translateY(0) rotate(0); }
-    50% { transform: translateY(-12px) rotate(-1deg); }
-  }
-
-  /* Burst particles on reveal */
-  .pack-burst {
-    position: absolute; inset: 0;
-    pointer-events: none;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .pack-burst i {
-    position: absolute; width: 8px; height: 8px;
-    border-radius: 50%;
-    opacity: 0;
-  }
-  .pack-stage.opened .pack-burst i {
-    animation: burst .9s ease-out forwards .35s;
-  }
-  @keyframes burst {
-    0% { opacity: 1; transform: translate(0,0) scale(1); }
-    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(.2); }
-  }
-
-  /* Reset button after reveal */
-  .pack-reset {
-    display: none;
-    position: absolute; left: 50%; bottom: -54px;
-    transform: translateX(-50%);
-    background: transparent; color: rgba(255,255,255,.7);
-    border: 1px solid rgba(255,255,255,.18);
-    font-family: 'Inter', sans-serif;
-    font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
-    padding: 8px 16px; border-radius: 100px;
-    cursor: pointer;
-    opacity: 0; pointer-events: none;
-    transition: opacity .3s ease 1.5s, color .2s, border-color .2s, background .2s;
-    white-space: nowrap;
-  }
-  .pack-stage.opened .pack-reset { opacity: 1; pointer-events: auto; }
-  .pack-reset:hover { color: #fff; border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.05); }
-  .hero-stat-pills {
-    display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap;
-  }
-  .pill {
-    background: rgba(255,255,255,.06); border: 1px solid var(--border);
-    padding: 8px 16px; border-radius: 100px;
-    font-size: 12px; font-weight: 600; color: var(--muted);
-    display: flex; align-items: center; gap: 6px;
-  }
-  .pill strong { color: var(--text); }
 
 
   /* ── BOOST PAGE ───────────────────────── */
@@ -760,75 +425,6 @@
     background: var(--red); color: white;
   }
 
-  .cards-grid {
-    display: grid; grid-template-columns: repeat(4,1fr); gap: 16px;
-  }
-  .game-card {
-    border-radius: 0; overflow: visible; position: relative;
-    cursor: pointer;
-    perspective: 1200px;
-  }
-  .game-card-inner {
-    position: relative;
-    width: 100%;
-    transform-style: preserve-3d;
-    transition: transform .7s cubic-bezier(.4, 0, .2, 1);
-  }
-  .game-card.flipped .game-card-inner { transform: rotateY(180deg); }
-  .game-card-front,
-  .game-card-back {
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-  }
-  .game-card-front {
-    position: relative;
-  }
-  .game-card-back {
-    position: absolute; inset: 0;
-    transform: rotateY(180deg);
-  }
-  .game-card-back img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    border-radius: 14px;
-  }
-  @media (hover: hover) {
-    .game-card:hover .game-card-inner {
-      transform: translateY(-8px) scale(1.02);
-    }
-    .game-card.flipped:hover .game-card-inner {
-      transform: translateY(-8px) scale(1.02) rotateY(180deg);
-    }
-  }
-  .game-card img {
-    width: 100%; height: auto; display: block;
-  }
-  .game-card img.card-badge,
-  .card-badge {
-    position: absolute; top: 20px; left: 20px; z-index: 2;
-    width: 60px !important; height: 60px !important; pointer-events: none;
-    transition: opacity .15s linear .35s;
-  }
-  .game-card.flipped .card-badge {
-    opacity: 0;
-    transition: opacity .15s linear .2s;
-  }
-  .cards-legend {
-    display: flex; gap: 32px; margin-top: 32px; align-items: flex-start;
-    flex-wrap: wrap;
-  }
-  .legend-item {
-    display: flex; align-items: flex-start; gap: 14px;
-    background: var(--card-dark); padding: 20px 24px; border-radius: var(--radius);
-    border: 1px solid var(--border); flex: 1; min-width: 220px;
-  }
-  .legend-dot {
-    width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; margin-top: 3px;
-  }
-  .legend-dot.common { background: rgba(255,255,255,.4); }
-  .legend-dot.wild { background: var(--red); box-shadow: 0 0 8px var(--red); }
-  .legend-item h4 { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
-  .legend-item p { font-size: 13px; color: var(--muted); line-height: 1.5; }
-
   /* ── REWARDS ──────────────────────────── */
   .rewards-wrap { background: var(--dark); }
   .rewards-grid {
@@ -983,9 +579,7 @@
     .hero-bg::after {
       background: linear-gradient(to bottom, rgba(0,0,0,.6) 0%, rgba(0,0,0,.45) 35%, rgba(0,0,0,.85) 78%, var(--black) 100%);
     }
-    .pack-tag { white-space: normal; width: 220px; text-align: center; bottom: auto; top: -44px; }
     .hero-visual { padding-top: 28px; }
-    .pack-hint { display: none; }
     .footer-register-hint {
       display: block;
       text-align: center;
@@ -1003,37 +597,16 @@
     }
     .hero-content { order: 2; }
     .hero-visual { order: 1; min-height: 260px; margin-top: -20px; }
-    .pack-stage { max-width: 210px; }
     .hero-title { font-size: clamp(34px, 9vw, 48px); margin-bottom: 8px; }
     .hero-sub { margin-left: auto; margin-right: auto; font-size: 15px; margin-bottom: 18px; }
     .hero-rg { margin-left: auto; margin-right: auto; }
     .hero-actions { justify-content: center; }
-    .hero-stat-pills { justify-content: center; }
     .hero-badge { margin-left: auto; margin-right: auto; }
     .hero-lines::before { left: 8%; }
     .hero-lines::after { right: 8%; }
     section { padding: 64px 20px; }
     .section-title { font-size: clamp(34px, 9vw, 48px); }
     .how-steps { grid-template-columns: 1fr; }
-    .cards-grid {
-      /* 2-row horizontal swipeable reel */
-      display: grid;
-      grid-auto-flow: column;
-      grid-template-columns: none;
-      grid-template-rows: repeat(2, auto);
-      grid-auto-columns: minmax(42%, 42%);
-      gap: 12px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-snap-type: x mandatory;
-      scroll-padding: 0 20px;
-      padding: 4px 20px 16px;
-      margin: 0 -20px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .cards-grid::-webkit-scrollbar { display: none; }
-    .cards-grid .game-card { scroll-snap-align: start; }
     .rewards-grid { grid-template-columns: 1fr 1fr; }
     .faq-grid { grid-template-columns: 1fr; }
     .faq-q { padding: 20px 18px; font-size: 14px; }
@@ -1044,17 +617,12 @@
     .footer-stores { justify-content: center; }
     .footer-links { gap: 16px; flex-wrap: wrap; justify-content: center; }
     .cards-inner { padding: 0 20px; }
-    .cards-legend { gap: 12px; margin-top: 24px; }
-    .legend-item { padding: 16px 18px; }
   }
   @media (max-width: 420px) {
     .rewards-grid { grid-template-columns: 1fr; }
-    .cards-grid { grid-auto-columns: minmax(58%, 58%); gap: 10px; }
-    .pack-stage { max-width: 216px; }
     .hero-visual { min-height: 210px; }
     .hero-inner { padding: 62px 20px 20px; gap: 8px; }
     .hero-title { font-size: clamp(30px, 8vw, 38px); }
-    .hero-stat-pills .pill { font-size: 11px; padding: 7px 12px; }
   }
 
   /* ── T&C MODAL ───────────────────────── */
@@ -1381,7 +949,6 @@
     <div class="footer-bottom">
       <p class="footer-legal">Os boosts são exclusivos para clientes KTO com conta ativa. Odds e ofertas sujeitas a termos e condições específicos. Jogue com responsabilidade. O jogo pode criar dependência. +18.</p>
       <img class="age-badge-rg" src="assets/legal-warning.svg" alt="Proibido para menores de 18 anos · Jogue com responsabilidade · Portaria SPA/MF Nº 2.093/2024">
-      <p class="footer-register-hint" style="display:none"><span class="pack-hint-link">Registre-se</span><span class="pack-hint-grey"> para ganhar de verdade.</span></p>
     </div>
   </div>
 </footer>
